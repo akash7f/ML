@@ -2,52 +2,70 @@ import numpy as np
 
 class Regression:
     
-    def __init__(self, x, y, learning_rate = 0.01, no_of_iterations = 100,
-        power = None, slope = None, constant = 0):
+    def fit(self, x, y, learning_rate = 0.001, no_of_iterations = 100000):
         
-        #if power is not given for any attribute or if power is given only for some input attributes
-        if power == None:
-            power = np.ones(len(x[0]))
-        elif len(power) != len(x[0]):
-            power = np.pad(power, (0, len(x[0]) - len(power)), mode='constant', constant_values=1)
-
-        #if slope is not given for any attribute or if slope is given only for some input attributes
-        if slope == None:
-            slope = np.zeros(len(x[0]))
-        elif len(slope) != len(x[0]):
-            slope = np.pad(power, (0, len(x[0]) - len(slope)), mode='constant', constant_values=0)
+        attributes = len(x[0])
+        samples = len(y)
         
         a = learning_rate                               #learning rate
         n = no_of_iterations                            #no of iterations
-        self.p = power                                  #power
-        self.w = slope                                  #slope
-        self.b = constant                               #constant
+        self.p = np.ones(attributes)                    #power
+        self.w = np.zeros(attributes)                   #slope
+        self.b = 0                                      #constant
 
         for i in range(0, n):
+            
 
-            yh = np.zeros(len(x))
-            for i in range(len(x[0])):
-                yh += self.w[i] * np.power(x[:, i], self.p[i])
+            # predicting values using row approach
+            # yh = np.zeros(samples)
+            # for i in range(samples):
+            #     yh[i] = self.predict(x[i])
+
+            # predicting values column approach
+            yh = np.zeros(samples)
+            for i in range(attributes):
+                attribute = x[:, i]
+                yh += self.w[i] * np.power(attribute, self.p[i])
             yh += self.b
+            
+            error = yh - y
+            # gradient descent with respect to power of each attribute
+            for i in range(attributes):
+                attribute = x[:, i]
+                log_attribute = np.log1p(attribute)
+                self.p[i] -= a * (error * self.w[i] * log_attribute * attribute ** self.p[i]).mean()
 
-            # MSE = ((yh - y)**2).mean()
-            # print(MSE)
+            # gradient descent with respect to slope of each attributee
+            # because of slow learning rate using of changed power will not effect much
+            for i in range(attributes):
+                attribute = x[:, i]
+                self.w[i] -= a * (error * attribute ** self.p[i]).mean()
 
-            for i in range(len(x[0])): 
-                self.w[i] -= 2*a*(((yh - y)*x[:, i]).mean())      #gradient descent with respect to w
-            self.b -= 2*a*((yh - y).mean())                       #gradient descent with respect to b
+            # gradient descent with respect to constant
+            self.b -= a * error.mean()
+
+        self.MSE = (error**2).mean()
 
     def predict(self, x):
-        return np.sum(self.w*np.power(x, self.p)) + self.b
-    
+        return np.sum(self.w* np.power(x, self.p)) + self.b
+
     def print(self):
-        print("power : ", self.p)
-        print("slope : ", self.w)
-        print("constant : ", self.b)
+        print()
+        print("Power : ", self.p)
+        print("Slope : ", self.w)
+        print("Constant : ", self.b)
+        print("MSE :", self.MSE)
+        print()
 
 if __name__ == "__main__":
-    x = np.array([[1,2,3], [2,4,5], [3,4,6], [4,5,7], [5,6,8]])     #input values
-    y = np.array([4, 5, 7, 6, 7])                                   #output values
-    model = Regression(x, y, power = [2,0.5])
+    import time
+
+    x = np.array([[1], [2], [3], [4], [5]])     #input values
+    y = np.array([1, 4, 9, 16, 25])                                   #output values
+    
+    model = Regression()
+    model.fit(x, y)
     model.print()
-    print("predicted value for [6,4,2] : ",model.predict([6,4,2]))
+
+    data = [8]
+    print(f"Predicted value for {data} : {model.predict(data)}")
