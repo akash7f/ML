@@ -3,7 +3,9 @@ import numpy as np
 class Regression:
     
     def fit(self, x, y, learning_rate = 0.001, no_of_iterations = 100000):
-        
+
+        if not isinstance(x[0], np.ndarray):
+            x = x.reshape(-1, 1)
         attributes = len(x[0])
         samples = len(y)
         
@@ -60,9 +62,8 @@ class Regression:
 if __name__ == "__main__":
     import time
 
-    x = np.array([[1], [2], [3], [4], [5]])     #input values
+    x = np.array([1, 2, 3, 4, 5])     #input values
     y = np.array([1, 4, 9, 16, 25])                                   #output values
-    
     model = Regression()
     model.fit(x, y)
     model.print()
