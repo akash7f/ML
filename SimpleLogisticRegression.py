@@ -10,16 +10,13 @@ b = 0
 
 a = 0.01                                      #learning rate
 
-for i in range(0, 90):
+for i in range(0, 10000):
     e = np.exp(w*x + b)
     yh = e/(1 + e)                              #linear function wrt w and b
+    error = yh - y
 
-    # MSE = ((yh - y)**2).mean()                #mean square error
-    # print(MSE)
-    iyh = 1/yh 
-
-    w -= 2*a* ((1 - y * iyh) * (iyh - 1) * (iyh) * x).mean()
-    b -= 2*a* ((1 - y * iyh) * (iyh - 1) * (iyh)).mean()
+    w -= 2*a* ( error * x).mean()
+    b -= 2*a* (error).mean()
 
 plt.plot(x, yh, c='r')
 plt.show()

@@ -2,7 +2,7 @@ import numpy as np
 
 class LogisticRegression:
     
-    def fit(self, x, y, learning_rate = 0.01, no_of_iterations = 80):
+    def fit(self, x, y, learning_rate = 0.01, no_of_iterations = 5000):
         """
         m samples of n dimensional data
         x = [[x11, x12...x1n],
@@ -36,9 +36,16 @@ class LogisticRegression:
             e = np.exp(ep)
             yh = e/(1 + e)
 
+
+            
+            """ 
+            Function (yh, y): Either -log(yh)  if y = 1
+                              or -log( 1-yh )  if y = 0 
+
+            Cost Function = (1 / m) Summation of(i = 1 to m)  Function (yh(i), y(i))
+            """
             # error between predicted value and true value
-            iyh = 1/yh 
-            error = (1 - y * iyh) * (iyh - 1) * (iyh) 
+            error = yh - y 
             
             # # reducing of error using gradient descent
             # # gradient descent with respect to power of each attribute
@@ -73,7 +80,7 @@ class LogisticRegression:
 
 
         # mean square error on training data
-        self.MSE = (error**2).mean()
+        self.Error = (error**2).mean()
 
     def predict(self, x):
         ep = np.sum(self.w* np.power(x, self.p)) + self.b
@@ -88,16 +95,16 @@ class LogisticRegression:
         print("Power : ", self.p)
         print("Slope : ", self.w)
         print("Constant : ", self.b)
-        print("MSE :", self.MSE)
+        print("Error :", self.Error)
         print()
 
 if __name__ == "__main__":
 
-    x = np.array([[0.1, 0.2], [0.3, 0.3], [0.5, 0.4], [0.6, 0.7], [1, 0.9]])
+    x = np.array([[1, 2], [3, 3], [5, 4], [6, 7], [1, 9]])
     y = np.array([0, 0, 1, 1, 1])
     model = LogisticRegression()
     model.fit(x, y)
     model.print()
 
-    data = [0.3, 0.9]
+    data = np.array([0, 0])
     print(f"Predicted value for {data} : {model.predict(data)}")

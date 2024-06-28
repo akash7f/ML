@@ -2,7 +2,7 @@ import numpy as np
 
 class PolynomialRegression:
     
-    def fit(self, x, y, learning_rate = 1, no_of_iterations = 100000):
+    def fit(self, x, y, learning_rate = 1, no_of_iterations = 10000):
         """
         m samples of n dimensional data
         x = [[x11, x12...x1n],
@@ -39,14 +39,19 @@ class PolynomialRegression:
                 yh += self.w[i] * np.power(attribute, self.p[i])
             yh += self.b
             
+            """
+            Function(yh, y) = (yh - y)^2
+
+            Cost Function = (1 / m) Summation of(i = 1 to m)  Function (yh(i), y(i))
+            """
             # error between predicted value and true value
             error = yh - y
             
-            # # reducing of error using gradient descent
+            # # reducing of cost using gradient descent
             # # gradient descent with respect to power of each attribute
             # for i in range(attributes):
             #     attribute = x[:, i]
-            #     log_attribute = np.log1p(attribute)
+            #     log_attribute = np.log(attribute)
             #     self.p[i] -= a * (error * self.w[i] * log_attribute * attribute ** self.p[i]).mean()
 
             # # gradient descent with respect to slope of each attributee
@@ -58,10 +63,10 @@ class PolynomialRegression:
             # # gradient descent with respect to constant
             # self.b -= a * error.mean()
 
-            # reducing of error using gradient descent merged
+            # reducing of cost using gradient descent merged
             for i in range(attributes):
                 attribute = x[:, i]
-                log_attribute = np.log1p(attribute)
+                log_attribute = np.log(attribute)
 
                 # gradient descent with respect to power of each attribute
                 self.p[i] -= a * (error * self.w[i] * log_attribute * attribute ** self.p[i]).mean()
@@ -75,7 +80,7 @@ class PolynomialRegression:
 
 
         # mean square error on training data
-        self.MSE = (error**2).mean()
+        self.Error = (error**2).mean()
 
     def predict(self, x):
         return np.sum(self.w* np.power(x, self.p)) + self.b
@@ -85,7 +90,7 @@ class PolynomialRegression:
         print("Power : ", self.p)
         print("Slope : ", self.w)
         print("Constant : ", self.b)
-        print("MSE :", self.MSE)
+        print("Error :", self.Error)
         print()
 
 if __name__ == "__main__":
