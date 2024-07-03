@@ -26,18 +26,7 @@ class PolynomialRegression:
 
         for iteration in range(n):
 
-            # # predicting values using row approach
-            # yh = np.zeros(samples)
-            # for i in range(samples):
-            #     yh[i] = self.predict(x[i])
-
-            # predicting values column approach
-            # column is preferred becuase of parallel multiplication of vector
-            yh = np.zeros(samples)
-            for i in range(attributes):
-                attribute = x[:, i]
-                yh += self.w[i] * np.power(attribute, self.p[i])
-            yh += self.b
+            yh = self.predict(x)
             
             """
             Function(yh, y) = (yh - y)^2
@@ -46,7 +35,7 @@ class PolynomialRegression:
             """
             # error between predicted value and true value
             error = yh - y
-            
+            """
             # # reducing of cost using gradient descent
             # # gradient descent with respect to power of each attribute
             # for i in range(attributes):
@@ -62,35 +51,43 @@ class PolynomialRegression:
 
             # # gradient descent with respect to constant
             # self.b -= a * error.mean()
+            """
 
-            # reducing of cost using gradient descent merged
-            for i in range(attributes):
-                attribute = x[:, i]
-                log_attribute = np.log(attribute)
-
-                # gradient descent with respect to power of each attribute
-                self.p[i] -= a * (error * self.w[i] * log_attribute * attribute ** self.p[i]).mean()
-                
-                # gradient descent with respect to slope of each attributee
-                # because of slow learning rate using of changed power will not effect much
-                self.w[i] -= a * (error * attribute ** self.p[i]).mean()
+            """ Vectorization of reducing of cost"""
             
-            # gradient descent with respect to constant
-            self.b -= a * error.mean()
+            log_attributes = np.log(x)                                          # log of attributes
+            attribute_powers = x ** self.p                                      # attribute values with their powers
+            error_term = error[:, np.newaxis] * attribute_powers                # Error term is error * attribute_powers
+            self.p -= a * (error_term * self.w * log_attributes).mean(axis=0)   # Gradient descent with respect to power of each attribute
+            self.w -= a * error_term.mean(axis=0)                               # Gradient descent with respect to slope of each attribute
+            self.b -= a * error.mean()                                          # Gradient descent with respect to constant
 
-
-        # mean square error on training data
-        self.Error = (error**2).mean()
 
     def predict(self, x):
-        return np.sum(self.w* np.power(x, self.p)) + self.b
+        # # predicting values using row approach
+        # yh = np.zeros(samples)
+        # for i in range(samples):
+        #     yh[i] = self.predict(x[i])
+
+        # # predicting values column approach
+        # # column is preferred becuase of parallel multiplication of vector
+        # yh = np.zeros(len(x))
+        # for i in range(len(x[0])):
+        #     attribute = x[:, i]
+        #     yh += self.w[i] * np.power(attribute, self.p[i])
+        # yh += self.b
+        
+        """Vectorization of prediction"""
+        attribute_powers = x ** self.p                        # Attribute values with their powers
+        yh = np.sum(self.w * attribute_powers, axis=1)        # Compute the weighted sum of the attribute powers
+        yh += self.b                                          # Add the constant term
+        return yh
 
     def print(self):
         print()
         print("Power : ", self.p)
         print("Slope : ", self.w)
         print("Constant : ", self.b)
-        print("Error :", self.Error)
         print()
 
 if __name__ == "__main__":
@@ -101,5 +98,5 @@ if __name__ == "__main__":
     model.fit(x, y)
     model.print()
 
-    data = [8, 5]
+    data = np.array([[8, 5]])
     print(f"Predicted value for {data} : {model.predict(data)}")
