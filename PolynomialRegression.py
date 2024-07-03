@@ -14,14 +14,13 @@ class PolynomialRegression:
         y = [y1, y2, y3...ym]
 
         """
-        # no of attributes in data and no of samples of data
-        attributes = len(x[0])
-        samples = len(x)
+        # no of dimensions in data and no of samples of data
+        dimensions = len(x[0])
         
         a = learning_rate                               #learning rate
         n = no_of_iterations                            #no of iterations
-        self.p = np.ones(attributes)                    #power
-        self.w = np.zeros(attributes)                   #slope
+        self.p = np.ones(dimensions)                    #power
+        self.w = np.zeros(dimensions)                   #slope
         self.b = 0                                      #constant
 
         for iteration in range(n):
@@ -37,17 +36,17 @@ class PolynomialRegression:
             error = yh - y
             """
             # # reducing of cost using gradient descent
-            # # gradient descent with respect to power of each attribute
-            # for i in range(attributes):
-            #     attribute = x[:, i]
-            #     log_attribute = np.log(attribute)
-            #     self.p[i] -= a * (error * self.w[i] * log_attribute * attribute ** self.p[i]).mean()
+            # # gradient descent with respect to power of each dimension
+            # for i in range(dimensions):
+            #     dimension = x[:, i]
+            #     log_dimension = np.log(dimension)
+            #     self.p[i] -= a * (error * self.w[i] * log_dimension * dimension ** self.p[i]).mean()
 
-            # # gradient descent with respect to slope of each attributee
+            # # gradient descent with respect to slope of each dimensione
             # # because of slow learning rate using of changed power will not effect much
-            # for i in range(attributes):
-            #     attribute = x[:, i]
-            #     self.w[i] -= a * (error * attribute ** self.p[i]).mean()
+            # for i in range(dimensions):
+            #     dimension = x[:, i]
+            #     self.w[i] -= a * (error * dimension ** self.p[i]).mean()
 
             # # gradient descent with respect to constant
             # self.b -= a * error.mean()
@@ -55,11 +54,11 @@ class PolynomialRegression:
 
             """ Vectorization of reducing of cost"""
             
-            log_attributes = np.log(x)                                          # log of attributes
-            attribute_powers = x ** self.p                                      # attribute values with their powers
-            error_term = error[:, np.newaxis] * attribute_powers                # Error term is error * attribute_powers
-            self.p -= a * (error_term * self.w * log_attributes).mean(axis=0)   # Gradient descent with respect to power of each attribute
-            self.w -= a * error_term.mean(axis=0)                               # Gradient descent with respect to slope of each attribute
+            log_dimensions = np.log(x)                                          # log of dimensions
+            dimension_powers = x ** self.p                                      # dimension values with their powers
+            error_term = error[:, np.newaxis] * dimension_powers                # Error term is error * dimension_powers
+            self.p -= a * (error_term * self.w * log_dimensions).mean(axis=0)   # Gradient descent with respect to power of each dimension
+            self.w -= a * error_term.mean(axis=0)                               # Gradient descent with respect to slope of each dimension
             self.b -= a * error.mean()                                          # Gradient descent with respect to constant
 
 
@@ -73,13 +72,13 @@ class PolynomialRegression:
         # # column is preferred becuase of parallel multiplication of vector
         # yh = np.zeros(len(x))
         # for i in range(len(x[0])):
-        #     attribute = x[:, i]
-        #     yh += self.w[i] * np.power(attribute, self.p[i])
+        #     dimension = x[:, i]
+        #     yh += self.w[i] * np.power(dimension, self.p[i])
         # yh += self.b
         
         """Vectorization of prediction"""
-        attribute_powers = x ** self.p                        # Attribute values with their powers
-        yh = np.sum(self.w * attribute_powers, axis=1)        # Compute the weighted sum of the attribute powers
+        dimension_powers = x ** self.p                        # dimension values with their powers
+        yh = np.sum(self.w * dimension_powers, axis=1)        # Compute the weighted sum of the dimension powers
         yh += self.b                                          # Add the constant term
         return yh
 
@@ -92,7 +91,13 @@ class PolynomialRegression:
 
 if __name__ == "__main__":
 
-    x = np.array([[0.1, 0.2], [0.3, 0.3], [0.5, 0.4], [0.6, 0.7], [1, 0.9]])
+    x = np.array([
+        [0.1, 0.2],
+        [0.3, 0.3],
+        [0.5, 0.4],
+        [0.6, 0.7],
+        [1, 0.9]
+        ])
     y = np.array([0.001, 0.027, 0.125, 0.343, 1])
     model = PolynomialRegression()
     model.fit(x, y)

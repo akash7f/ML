@@ -1,5 +1,9 @@
 import numpy as np
-from sortby import sortbyrow as sbr
+
+def sbr(A, i):
+    sorted_indices = np.argsort(A[i])
+    sorted_A = A[:, sorted_indices]
+    return sorted_A
 
 class KNN:
     
@@ -32,8 +36,8 @@ class KNN:
             k_error[0][Knot] = self.K
             k_error[1][Knot] = error
         
-        sbr(k_error, 1)
-        self.K = k_error[0][0]
+        sorted_k_error = sbr(k_error, 1)
+        self.K = sorted_k_error[0][0]
 
     def predict(self, x):
         
@@ -47,14 +51,14 @@ class KNN:
                 j+=1
 
             dis_out = np.vstack([distances, self.outputs.copy()])
-            sbr(dis_out, 0)
-            k_outputs = dis_out[1][:self.K]
+            sorted_dis_out = sbr(dis_out, 0)
+            k_outputs = sorted_dis_out[1][:self.K]
 
             unique, frequencies = np.unique(k_outputs, return_counts=True)
             uni_fre = np.vstack([unique, frequencies])
-            sbr(uni_fre, 1)
+            sorted_uni_fre = sbr(uni_fre, 1)
 
-            yh[i] = uni_fre[0][-1]
+            yh[i] = sorted_uni_fre[0][-1]
             i+=1
 
         return yh
