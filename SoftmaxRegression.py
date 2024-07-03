@@ -6,15 +6,14 @@ class SoftmaxRegression:
         a = learning_rate
         n = no_of_iterations
         self.outputs = np.unique(y)
-        no_of_outputs = len(self.outputs)
-        self.W = np.zeros(shape=(no_of_outputs, dimensions))
-        self.b = np.zeros(no_of_outputs)
+        classes = len(self.outputs)
+        self.W = np.zeros(shape=(classes, dimensions))
+        self.b = np.zeros(classes)
 
         for iteration in range(n):
             yh = self.evaluate(x)
 
-            # for i in range(no_of_outputs):
-
+            # for i in range(classes):
             #     indicator = np.where(y == self.outputs[i], 1, 0)
             #     error = yh[:, i] - indicator
 
@@ -23,7 +22,7 @@ class SoftmaxRegression:
             #     self.b[i] -= error.mean() 
 
             """ Vectorized for efficiency"""
-            error = yh - np.eye(no_of_outputs)[y]
+            error = yh - np.eye(classes)[y]
             self.W -= a * np.dot(error.T, x) / x.shape[0]
             self.b -= a * error.mean(axis=0)
 
