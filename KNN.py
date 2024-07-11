@@ -27,11 +27,8 @@ class KNN:
 
             yh = self.predict(x)
 
-            error = 0
-            for i in range(0, self.samples):
-                if yh[i] != self.outputs[i]:
-                    error += 1
-
+            error = np.where(yh == self.outputs, 0, 1)
+            error = np.sum(error)
             Knot = self.K//2 - 1
             k_error[0][Knot] = self.K
             k_error[1][Knot] = error
@@ -71,9 +68,12 @@ class KNN:
 
 if __name__ == "__main__":
 
-    x = np.array([[0.1, 0.2], [0.3, 0.3] ,[0.6, 0.7], [1, 0.9],[1, 1], [1.5, 2], [0.9, 2], [1.1, 1], [1.2, 0.4], [0.5, 0.4]])
-    y = np.array([0, 0, 0, 1, 1, 1, 1, 1, 0, 0])
+    from sklearn.datasets import load_iris
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+    print(y)
     model = KNN()
-    model.fit(x, y)
-    model.print()
-    print(model.predict([[1.1, 0.9]]))
+    model.fit(X, y)
+    yh = model.predict(X)
+    print(yh)

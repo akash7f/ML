@@ -34,7 +34,7 @@ class LogisticRegression:
             Cost Function = (1 / m) Summation of(i = 1 to m)  Function (yh(i), y(i))
 
             derivation of the cost function of logistic regression is same as
-            the cost function of linear regression 
+            derivation of the cost function of linear regression 
             Its's better to understand linear regression first
 
             we can skip power too if we want as we have seen the sigmoi function

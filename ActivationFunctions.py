@@ -19,6 +19,10 @@ def sigmoid(x):
     # 0 < y < 1 for -infinity < x < infinity
     return 1/(1 + numpy.exp(-x))
 
+def sigmoid_derivative(x):
+    return sigmoid(x) * (1 - sigmoid(x))
+
+
 def relu(x):
     """
     Rectified Linear Unit Function
@@ -28,8 +32,19 @@ def relu(x):
     return numpy.where(x < 0, 0, x)
 
 if __name__  == "__main__":
-    a = numpy.random.randint(-100, 100, 5)
-    print(a)
-    print(linear(a))
-    print(sigmoid(a))
-    print(relu(a))
+    import matplotlib.pyplot as plt
+
+    x = numpy.linspace(-5, 5, 100)
+    l = linear(x)
+    s = sigmoid(x)
+    r = relu(x)
+    plt.subplot(1, 3, 1)
+    plt.plot(x, l, color='r')
+    plt.title('Linear')
+    plt.subplot(1, 3, 2)
+    plt.plot(x, s, color='g')
+    plt.title('Sigmoid')
+    plt.subplot(1, 3, 3)
+    plt.plot(x, r, color='b')
+    plt.title('ReLu')
+    plt.show()

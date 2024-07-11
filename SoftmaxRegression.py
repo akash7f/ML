@@ -41,21 +41,13 @@ class SoftmaxRegression:
         return yh
 
 if __name__ == "__main__":
-    x = np.array([
-        [2.0, 3.0],
-        [1.0, 5.0],
-        [2.0, 2.0],
-        [3.0, 6.0],
-        [5.0, 8.0],
-        [8.0, 8.0],
-        [7.0, 6.0],
-        [6.0, 5.0],
-        [6.0, 3.0],
-        [5.0, 2.0]
-    ])
 
-    y = np.array([0, 0, 0, 0, 1, 1, 1, 1, 2, 2])
-
+    from sklearn.datasets import load_iris
+    iris = load_iris()
+    X = iris.data
+    y = iris.target
+    print(y)
     model = SoftmaxRegression()
-    model.fit(x, y)
-    print(model.predict(x))
+    model.fit(X, y)
+    yh = model.predict(X)
+    print(yh)
